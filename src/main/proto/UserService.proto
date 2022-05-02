@@ -1,0 +1,46 @@
+syntax = "proto3";
+package user.service.grpc;
+import "google/protobuf/empty.proto";
+
+message FindUserByIdRequest {
+  int32 id = 1;
+}
+
+message FindUserByNameRequest {
+  string name = 1;
+}
+
+message AllUserResponse {
+  User user = 1;
+}
+
+message FindUserResponse {
+  User user =1;
+}
+
+message CreateUserRequest {
+  User user = 1;
+}
+
+message CreateUserResponse {
+  User user = 1;
+}
+
+message User {
+  int32 id = 1;
+  string firstName = 2;
+  string secondName = 3;
+  int32 age = 4;
+  string role = 5;
+}
+
+service UserCrudService {
+
+  rpc findUserById(FindUserByIdRequest) returns (FindUserResponse);
+
+  rpc findUserByName(FindUserByNameRequest) returns (FindUserResponse);
+
+  rpc createUser(CreateUserRequest) returns (CreateUserResponse);
+
+  rpc allUser(google.protobuf.Empty) returns (stream AllUserResponse);
+}
