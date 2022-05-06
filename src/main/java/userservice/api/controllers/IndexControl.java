@@ -1,11 +1,8 @@
 package userservice.api.controllers;
 
 import com.google.protobuf.Empty;
-import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import user.service.grpc.UserCrudServiceGrpc;
 import user.service.grpc.UserService;
 import userservice.api.models.Role;
@@ -15,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-@Log4j
 @RestController
 @RequestMapping("/index")
 public class IndexControl {
@@ -45,5 +41,57 @@ public class IndexControl {
             users.add(user);
         }
         return users;
+    }
+
+    @PostMapping("/save")
+    public User saveUser(@RequestBody User user) {
+        UserService.User userGrpc = UserService.User
+                .newBuilder()
+                .setFirstName(user.getFirstName())
+                .setSecondName(user.getSecondName())
+                .setAge(user.getAge())
+                .setRole(user.getRole().toString())
+                .build();
+        UserService.CreateUserRequest request = UserService.CreateUserRequest.newBuilder()
+                .setUser(userGrpc)
+                        .build();
+        UserService.CreateUserResponse response = stub.createUser(request);
+        user.setId(response.getUser().getId());
+        return user;
+    }
+
+    @GetMapping("/findById/{id}")
+    public User findUserById(@PathVariable int id) {
+        UserService.FindUserByIdRequest request = UserService
+                .FindUserByIdRequest
+                .newBuilder()
+                .setId(id)
+                .build();
+        UserService.FindUserResponse response = stub.findUserById(request);
+        UserService.User userGrpc = response.getUser();
+        return new User(
+                userGrpc.getId(),
+                userGrpc.getFirstName(),
+                userGrpc.getSecondName(),
+                userGrpc.getAge(),
+                Role.valueOf(userGrpc.getRole())
+        );
+    }
+
+    @GetMapping("/findBySecondName/{secondName}")
+    public User findUserBySecondName(@PathVariable String secondName) {
+        UserService.FindUserByNameRequest request = UserService.FindUserByNameRequest
+                .newBuilder()
+                .setName(secondName)
+                .build();
+        UserService.FindUserResponse response = stub.findUserByName(request);
+        UserService.User userGrpc = response.getUser();
+        return new User(
+                userGrpc.getId(),
+                userGrpc.getFirstName(),
+                userGrpc.getSecondName(),
+                userGrpc.getAge(),
+                Role.valueOf(userGrpc.getRole())
+        );
     }
 }

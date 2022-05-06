@@ -1,14 +1,12 @@
 package userservice.api.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
 @Getter
+@Setter
 public class User {
     private int id;
     private String firstName;
