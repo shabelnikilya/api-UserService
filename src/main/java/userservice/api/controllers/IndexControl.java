@@ -2,6 +2,7 @@ package userservice.api.controllers;
 
 import com.google.protobuf.Empty;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import user.service.grpc.UserCrudServiceGrpc;
 import user.service.grpc.UserService;
@@ -17,11 +18,14 @@ import java.util.List;
 public class IndexControl {
     private final UserCrudServiceGrpc.UserCrudServiceBlockingStub stub;
     private final Empty empty;
+    private final PasswordEncoder encoder;
 
     @Autowired
-    public IndexControl(UserCrudServiceGrpc.UserCrudServiceBlockingStub stub, Empty empty) {
+    public IndexControl(UserCrudServiceGrpc.UserCrudServiceBlockingStub stub, Empty empty,
+                        PasswordEncoder encoder) {
         this.stub = stub;
         this.empty = empty;
+        this.encoder = encoder;
     }
 
     @GetMapping("/find-all")
@@ -49,6 +53,7 @@ public class IndexControl {
                 .newBuilder()
                 .setFirstName(user.getFirstName())
                 .setSecondName(user.getSecondName())
+                .setPassword(encoder.encode(user.getPassword()))
                 .setAge(user.getAge())
                 .setRole(user.getRole().toString())
                 .build();

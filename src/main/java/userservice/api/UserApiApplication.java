@@ -13,7 +13,7 @@ import user.service.grpc.UserCrudServiceGrpc;
 public class UserApiApplication {
 
 	@Bean
-	public UserCrudServiceGrpc.UserCrudServiceBlockingStub getStub(@Value("${grpc.server}") String server) {
+	public UserCrudServiceGrpc.UserCrudServiceBlockingStub stub(@Value("${grpc.server}") String server) {
 		ManagedChannel channel = ManagedChannelBuilder.forTarget(server).usePlaintext().build();
 		return UserCrudServiceGrpc.newBlockingStub(channel);
 	}
@@ -26,5 +26,4 @@ public class UserApiApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(UserApiApplication.class, args);
 	}
-
 }
